@@ -15,7 +15,7 @@ module Request
       request.headers['Content-Type'] = format.to_s
     end
 
-    def api_authorization_token(token)
+    def api_authorization_header(token)
       request.headers['Authorization'] = token
     end
 
