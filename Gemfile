@@ -18,8 +18,6 @@ end
 
 group :test do
   gem "rspec-rails"
-  gem "factory_girl_rails"
-  gem 'ffaker'
   gem "shoulda-matchers"
 end
 
@@ -27,6 +25,8 @@ group :development, :test do
   gem 'byebug'
   gem 'pry-rails'
   gem 'pry-remote'
+  gem "factory_girl_rails"
+  gem 'ffaker'
 end
 
 group :development do
