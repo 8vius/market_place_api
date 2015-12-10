@@ -4,6 +4,7 @@ describe Product do
   let(:product) { build(:product) }
   subject { product }
 
+  it { should belong_to(:user) }
   it { should respond_to(:title) }
   it { should respond_to(:price) }
   it { should respond_to(:published) }
