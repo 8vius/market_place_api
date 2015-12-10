@@ -18,7 +18,7 @@ describe Api::V1::UsersController do
   describe "POST #create" do
     context "with valid attributes" do
       before(:each) do
-        @user_attributes = FactoryGirl.attributes_for :user
+        @user_attributes = attributes_for :user
         post :create, { user: @user_attributes }
       end
 
@@ -52,7 +52,8 @@ describe Api::V1::UsersController do
   describe "PATCH #update" do
     context "when successfully updated" do
       before(:each) do
-        @user = FactoryGirl.create(:user)
+        @user = create(:user)
+        api_authorization_token(@user.auth_token)
         patch :update, { id: @user.id, user: { email: 'newmail@example.com' } }
       end
 
@@ -68,7 +69,8 @@ describe Api::V1::UsersController do
   describe "DELETE #destroy" do
     before(:each) do
       @user = FactoryGirl.create :user
-      delete :destroy, { id: @user.id }
+        api_authorization_token(@user.auth_token)
+      delete :destroy, { id: @user.auth_token }
     end
 
     it { should respond_with 204 }
