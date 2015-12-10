@@ -6,13 +6,13 @@ end
 
 describe Authenticable do
   let(:authentication) { Authentication.new }
-  subject { autnetication }
+  subject { authentication }
 
   describe "#current_user" do
     before do
       @user = create(:user)
       request.headers["Authorization"] = @user.auth_token
-      authentication.stub(:request).and_return(request)
+      allow(authentication).to receive(:request).and_return(request)
     end
 
     it "returns the user from the authorization header" do
@@ -23,10 +23,10 @@ describe Authenticable do
   describe "#authenticate_with_token!" do
     before do
       @user = create(:user)
-      authentication.stub(:current_user).and_return(nil)
-      response.stub(:response_code).and_return(401)
-      response.stub(:body).and_return({"errors" => "Not authenticated"}.to_json)
-      authentication.stub(:response).and_return(response)
+      allow(authentication).to receive(:current_user).and_return(nil)
+      allow(response).to receive(:response_code).and_return(401)
+      allow(response).to receive(:body).and_return({"errors" => "Not authenticated"}.to_json)
+      allow(authentication).to receive(:response).and_return(response)
     end
 
     it "render a json error message" do
@@ -34,5 +34,27 @@ describe Authenticable do
     end
 
     it {  should respond_with 401 }
+  end
+
+  describe "#user_signed_in?" do
+    context "when there is a user 'session'" do
+      context "when there is a user on 'session'" do
+        before do
+          @user = create(:user)
+          allow(authentication).to receive(:current_user).and_return(@user)
+        end
+
+        it { should be_user_signed_in }
+      end
+
+      context "when there is no user 'session'" do
+        before do
+          @user = create(:user)
+          allow(authentication).to receive(:current_user).and_return(nil)
+        end
+
+        it { should_not be_user_signed_in }
+      end
+    end
   end
 end
