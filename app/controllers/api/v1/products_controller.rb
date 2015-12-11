@@ -8,7 +8,7 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def index
-    @products = Product.all
+    @products = products
     render :index, status: :ok
   end
 
@@ -42,5 +42,13 @@ class Api::V1::ProductsController < ApplicationController
 
   def product_params
     params.require(:product).permit(:title, :price, :user_id)
+  end
+
+  def products
+    params[:product_ids].present? ?  scoped_products : Product.all
+  end
+
+  def scoped_products
+    Product.find(params[:product_ids])
   end
 end
