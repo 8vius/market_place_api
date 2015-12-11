@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Api::V1::ProductsController do
+  render_views
+
   describe "GET #show" do
     before(:each) do
       @product = create(:product)
@@ -8,8 +10,13 @@ describe Api::V1::ProductsController do
     end
 
     it "returns the information about a reporter on a hash" do
-      product_response = json_response
+      product_response = json_response[:product]
       expect(product_response[:title]).to eq @product.title
+    end
+
+    it "has the user as a embeded object" do
+      product_response = json_response[:product]
+      expect(product_response[:user][:email]).to eql @product.user.email
     end
 
     it { should respond_with 200 }
@@ -26,6 +33,14 @@ describe Api::V1::ProductsController do
       expect(products_response[:products].count).to eq 4
     end
 
+    it "returns the user object into each product" do
+      products_response = json_response[:products]
+      binding.pry
+      products_response.each do |product_response|
+        expect(product_response[:user]).to be_present
+      end
+    end
+
     it { should respond_with 200 }
   end
 
@@ -39,7 +54,7 @@ describe Api::V1::ProductsController do
       end
 
       it "renders the json representation for the product record just created" do
-        product_response = json_response
+        product_response = json_response[:product]
         expect(product_response[:title]).to eq @product_attributes[:title]
       end
 
@@ -82,7 +97,7 @@ describe Api::V1::ProductsController do
       end
 
       it "renders the json representation for the updated user" do
-        product_response = json_response
+        product_response = json_response[:product]
         expect(product_response[:title]).to eq "An expensive TV"
       end
 

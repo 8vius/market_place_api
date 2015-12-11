@@ -3,31 +3,32 @@ class Api::V1::UsersController < ApplicationController
   respond_to :json
 
   def show
-    respond_with  User.find(params[:id])
+    @user = User.find(params[:id])
+    render :show, status: :ok
   end
 
   def create
-    user = User.new(user_params)
-    if user.save
-      render json: user, status: 201, location: [:api, user]
+    @user = User.new(user_params)
+    if @user.save
+      render :show, status: :created
     else
-      render json: { errors: user.errors }, status: 422
+      render json: { errors: @user.errors }, status: :unprocessable_entity
     end
   end
 
   def update
-    user = current_user
+    @user = current_user
 
-    if user.update(user_params)
-      render json: user, status: 200, location: [:api, user]
+    if @user.update(user_params)
+      render :show, status: :ok
     else
-      render json: { errors: user.errors }, status: 422
+      render json: { errors: @user.errors }, status: :unprocessable_entity
     end
   end
 
   def destroy
     current_user.destroy
-    head 204
+    head :no_content
   end
 
   private

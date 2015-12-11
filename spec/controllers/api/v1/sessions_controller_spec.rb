@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Api::V1::SessionsController do
+  render_views
+
   describe "POST #create" do
     before(:each) do
       @user = create(:user)
@@ -14,7 +16,7 @@ describe Api::V1::SessionsController do
 
       it "returns the authenticated user that corresponds to the credentials" do
         @user.reload
-        expect(json_response[:auth_token]).to eq @user.auth_token
+        expect(json_response[:session][:auth_token]).to eq @user.auth_token
       end
 
       it { should respond_with 200 }

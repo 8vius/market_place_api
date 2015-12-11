@@ -3,37 +3,39 @@ class Api::V1::ProductsController < ApplicationController
   respond_to :json
 
   def show
-    respond_with Product.find(params[:id])
+    @product = Product.find(params[:id])
+    render :show, status: :ok
   end
 
   def index
-    respond_with Product.all
+    @products = Product.all
+    render :index, status: :ok
   end
 
   def create
-    product = current_user.products.build(product_params)
+    @product = current_user.products.build(product_params)
 
-    if product.save
-      render json: product, status: 201, location: [:api, product]
+    if @product.save
+      render :show, status: :created
     else
-      render json: { errors: product.errors }, status: 422
+      render json: { errors: @product.errors }, status: :unprocessable_entity
     end
   end
 
   def update
-    product = current_user.products.find(params[:id])
+    @product = current_user.products.find(params[:id])
 
-    if product.update(product_params)
-      render json: product, status: 200, location: [:api, product]
+    if @product.update(product_params)
+      render :show, status: :ok
     else
-      render json: { errors: product.errors }, status: 422
+      render json: { errors: @product.errors }, status: :unprocessable_entity
     end
   end
 
   def destroy
     product = current_user.products.find(params[:id])
     product.destroy
-    head 204
+    head :no_content
   end
 
   private
